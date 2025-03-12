@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2>Multi-Factor Authentication</h2>
+        <p>We have sent a verification code to your email. Please enter it below:</p>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="mfa_code" class="form-label">Verification Code</label>
+                <input type="text" name="mfa_code" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Verify</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

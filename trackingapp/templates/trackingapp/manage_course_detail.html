@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Page Header Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1">{{ course.name }}</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Course Management</a></li>
+                        <li class="breadcrumb-item active">{{ course.name }}</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="btn-group">
+                <a href="{% url 'grade_report' course.id %}" class="btn btn-primary">
+                    <i class="fas fa-chart-line me-2"></i>Grade Management
+                </a>
+                <a href="{% url 'attendance_list' %}" class="btn btn-light">
+                    <i class="fas fa-clipboard-check me-2"></i>Attendance Records
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Information Card -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="fas fa-info-circle me-2"></i>Course Information
+                </h5>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-primary bg-opacity-10 text-primary me-3">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Course Code</div>
+                                <div class="fw-medium">{{ course.code }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-success bg-opacity-10 text-success me-3">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Instructor</div>
+                                <div class="fw-medium">{{ course.teacher.username }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-info bg-opacity-10 text-info me-3">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Enrolled Students</div>
+                                <div class="fw-medium">{{ students_in_course|length }} people</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-warning bg-opacity-10 text-warning me-3">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Course Hours</div>
+                                <div class="fw-medium">48 hours</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="fas fa-chart-pie me-2"></i>Course Statistics
+                </h5>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-primary bg-opacity-10 text-primary me-3">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Average Attendance</div>
+                                <div class="fw-medium">95.8%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-success bg-opacity-10 text-success me-3">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Average Grade</div>
+                                <div class="fw-medium">85.6 points</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-info bg-opacity-10 text-info me-3">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Homework Completion Rate</div>
+                                <div class="fw-medium">92.3%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-warning bg-opacity-10 text-warning me-3">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Course Rating</div>
+                                <div class="fw-medium">4.5/5.0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Student Management Section -->
+<div class="row g-4">
+    <!-- Enrolled Students List -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-check me-2"></i>Enrolled Students
+                    </h5>
+                    <span class="badge bg-primary">{{ students_in_course|length }} people</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0 ps-4">Student Info</th>
+                                <th class="border-0 pe-4 text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in students_in_course %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-light me-3">
+                                            <i class="fas fa-user text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ s.username }}</h6>
+                                            <small class="text-muted">ID: {{ s.id }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <form method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="student_id" value="{{ s.id }}">
+                                        <input type="hidden" name="action_type" value="remove">
+                                        <button type="submit" class="btn btn-light btn-sm text-danger">
+                                            <i class="fas fa-user-minus me-1"></i>Remove
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center py-4 text-muted">
+                                    <i class="fas fa-user-slash fa-2x mb-2"></i>
+                                    <p class="mb-0">No students enrolled in this course</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Students List -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Available Students
+                    </h5>
+                    <div class="input-group input-group-sm" style="width: 200px;">
+                        <input type="text" class="form-control" placeholder="Search students...">
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0 ps-4">Student Info</th>
+                                <th class="border-0 pe-4 text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in all_students %}
+                            {% if s not in students_in_course %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-light me-3">
+                                            <i class="fas fa-user text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ s.username }}</h6>
+                                            <small class="text-muted">ID: {{ s.id }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <form method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="student_id" value="{{ s.id }}">
+                                        <input type="hidden" name="action_type" value="add">
+                                        <button type="submit" class="btn btn-light btn-sm text-success">
+                                            <i class="fas fa-user-plus me-1"></i>Add
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

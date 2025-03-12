@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-primary text-white rounded-3 p-5 mb-4">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-3">Smart Education Management Platform</h1>
+            <p class="lead mb-4">Integrated course management, attendance tracking, grade statistics, announcement posting and more to drive digital transformation in education</p>
+            {% if not user.is_authenticated %}
+            <div class="d-flex gap-3">
+                <a href="{% url 'login' %}" class="btn btn-light btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login Now
+                </a>
+                <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Register Account
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-4 d-none d-lg-block">
+            <img src="/api/placeholder/400/300" alt="Education" class="img-fluid rounded-3">
+        </div>
+    </div>
+</div>
+
+<!-- Features -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-primary bg-gradient text-white mb-4 mx-auto">
+                    <i class="fas fa-book-reader fa-2x"></i>
+                </div>
+                <h5 class="card-title mb-3">Course Management</h5>
+                <p class="card-text text-muted">Easily manage course information, with support for creating, editing and enrolling courses</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-success bg-gradient text-white mb-4 mx-auto">
+                    <i class="fas fa-clipboard-check fa-2x"></i>
+                </div>
+                <h5 class="card-title mb-3">Attendance Tracking</h5>
+                <p class="card-text text-muted">Support for multiple attendance methods including QR check-in and manual recording</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-info bg-gradient text-white mb-4 mx-auto">
+                    <i class="fas fa-chart-line fa-2x"></i>
+                </div>
+                <h5 class="card-title mb-3">Grade Statistics</h5>
+                <p class="card-text text-muted">Smart grade management system with multi-dimensional analysis and statistics</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-warning bg-gradient text-white mb-4 mx-auto">
+                    <i class="fas fa-bullhorn fa-2x"></i>
+                </div>
+                <h5 class="card-title mb-3">Announcement Posting</h5>
+                <p class="card-text text-muted">Timely post and receive course notifications and scheduling updates</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if register %}
+<!-- Registration Form -->
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent py-3">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-user-plus me-2"></i>Create New Account
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{% url 'register' %}" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- System Overview -->
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="stats-circle bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-1">1,234</h3>
+                        <div class="text-muted">Registered Users</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="stats-circle bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-book fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-1">156</h3>
+                        <div class="text-muted">Active Courses</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="stats-circle bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-1">98.5%</h3>
+                        <div class="text-muted">Average Attendance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Page Specific Styles -->
+<style>
+.hero-section {
+    background: linear-gradient(45deg, var(--bs-primary), #3f37c9);
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Styles for registration form */
+.form-control {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+}
+</style>
+
+<!-- Page Specific Scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add Bootstrap classes to input elements
+    document.querySelectorAll('input').forEach(function(input) {
+        input.classList.add('form-control');
+    });
+});
+</script>
+{% endblock %}

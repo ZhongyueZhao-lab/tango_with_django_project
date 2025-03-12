@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Announcement List</h2>
+{% if create_mode %}
+<h3>Create Announcement</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Post</button>
+    <a href="{% url 'announcement_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+{% elif edit_mode %}
+<h3>Edit Announcement</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{% url 'announcement_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+{% else %}
+<a href="{% url 'create_announcement' %}" class="btn btn-primary mb-3">Create Announcement</a>
+<table class="table table-bordered">
+    <tr>
+        <th>Title</th>
+        <th>Posted By</th>
+        <th>Type</th>
+        <th>Posted On</th>
+        <th>Valid Until</th>
+        <th>Action</th>
+    </tr>
+    {% for ann in announcements %}
+    <tr>
+        <td>{{ ann.title }}</td>
+        <td>{{ ann.creator.username }}</td>
+        <td>{% if ann.is_global %}Global{% else %}Course{% endif %}</td>
+        <td>{{ ann.created_at }}</td>
+        <td>{% if ann.valid_until %}{{ ann.valid_until }}{% else %}None{% endif %}</td>
+        <td>
+            <a href="{% url 'announcement_detail' ann.id %}" class="btn btn-sm btn-info">View</a>
+            {% if user.role == 'ADMIN' or user == ann.creator %}
+            <a href="{% url 'edit_announcement' ann.id %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'delete_announcement' ann.id %}" class="btn btn-sm btn-danger">Delete</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

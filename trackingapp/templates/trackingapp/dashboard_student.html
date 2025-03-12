@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 bg-primary text-white shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-circle bg-white text-primary me-3">
+                        <i class="fas fa-user-graduate fa-2x"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">Welcome back, {{ user.username }}</h4>
+                        <p class="mb-0 text-white-50">Today is {% now "Y年n月j日" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Statistics -->
+<div class="row g-3 mb-4">
+    <!-- Registered Courses -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-primary bg-gradient text-white me-3">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h6 class="mb-0">Registered Courses</h6>
+                </div>
+                <h3 class="mb-0">{{ courses|length }}</h3>
+                <p class="text-muted small mb-0">courses</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Average Attendance -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-success bg-gradient text-white me-3">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h6 class="mb-0">Average Attendance</h6>
+                </div>
+                <h3 class="mb-0">{{ avg_attendance }}%</h3>
+                <p class="text-muted small mb-0">Cumulative this semester</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unread Announcements -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-info bg-gradient text-white me-3">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h6 class="mb-0">Unread Announcements</h6>
+                </div>
+                <h3 class="mb-0">{{ unread_ann_count }}</h3>
+                <p class="text-muted small mb-0">new announcements</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Courses List -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">
+                    <i class="fas fa-graduation-cap me-2"></i>My Courses
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0">Course Name</th>
+                                <th class="border-0">Course Code</th>
+                                <th class="border-0">Teacher</th>
+                                <th class="border-0">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in courses %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="course-icon me-3">
+                                            <i class="fas fa-book-open text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ c.name }}</h6>
+                                            <small class="text-muted">{{ c.description|default:"No description" }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ c.code }}</td>
+                                <td>{{ c.teacher.username }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'grade_report' c.id %}"
+                                           class="btn btn-primary btn-sm"
+                                           data-bs-toggle="tooltip"
+                                           title="View Grades">
+                                            <i class="fas fa-chart-line"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-book-open fa-2x mb-2"></i>
+                                        <p class="mb-0">You have not enrolled in any courses</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Action Area -->
+<div class="row g-3">
+    <!-- Course Enrollment Management -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-user-plus me-2"></i>Course Enrollment
+                </h5>
+                <p class="text-muted small">View all courses to enroll or drop</p>
+                <a href="{% url 'manage_courses' %}" class="btn btn-success btn-sm">
+                    <i class="fas fa-book-open me-1"></i> Go to Enrollment
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Records -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-calendar-check me-2"></i>Attendance Records
+                </h5>
+                <p class="text-muted small">Check your attendance and perform manual or QR check-in</p>
+                <a href="{% url 'attendance_list' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-clipboard-check me-1"></i> View Attendance
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🆕 Location-Based Check-in (NEW) -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-map-marker-alt me-2"></i> Location Check-in
+                </h5>
+                <p class="text-muted small">Use GPS-based location check-in</p>
+                <a href="{% url 'checkin' %}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-map-marked-alt me-1"></i> Start Check-in
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Latest Announcements (Example) -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-bullhorn me-2"></i>Announcements
+                </h5>
+                <p class="text-muted small">View the latest announcements and notifications</p>
+                <a href="{% url 'announcement_list' %}" class="btn btn-info btn-sm">
+                    <i class="fas fa-bullhorn me-1"></i> View Announcements
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

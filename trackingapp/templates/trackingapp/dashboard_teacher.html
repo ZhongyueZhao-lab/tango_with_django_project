@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Welcome Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 bg-primary text-white shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-circle bg-white text-primary me-3">
+                        <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">{{ user.get_full_name|default:user.username }} Teacher, Welcome back!</h4>
+                        <p class="mb-0 text-white-50">Today is {% now "Y年n月j日" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistic Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-primary bg-gradient text-white me-3">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h6 class="mb-0">Courses Taught</h6>
+                </div>
+                <h3 class="mb-0">{{ courses|length }}</h3>
+                <p class="text-muted small mb-0">courses</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-success bg-gradient text-white me-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h6 class="mb-0">Enrolled Students</h6>
+                </div>
+                <h3 class="mb-0">{{ distinct_students_count }}</h3>
+                <p class="text-muted small mb-0">students</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-info bg-gradient text-white me-3">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h6 class="mb-0">Today's Classes</h6>
+                </div>
+                <h3 class="mb-0">2</h3>
+                <p class="text-muted small mb-0">sessions (example)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-warning bg-gradient text-white me-3">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h6 class="mb-0">Pending Homework</h6>
+                </div>
+                <h3 class="mb-0">15</h3>
+                <p class="text-muted small mb-0">assignments (example)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Function Area -->
+<div class="row g-3 mb-4">
+    <!-- Courses List -->
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>My Courses</h5>
+                <a href="{% url 'manage_courses' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i>Add Course
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Course Code</th>
+                                <th>Student Count</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in courses %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="course-icon me-3">
+                                            <i class="fas fa-book-open text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ c.name }}</h6>
+                                            <small class="text-muted">{{ c.code }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ c.code }}</td>
+                                <td>{{ c.students.count }} students</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'manage_course_detail' c.id %}"
+                                           class="btn btn-sm btn-primary"
+                                           data-bs-toggle="tooltip"
+                                           title="Manage Course">
+                                            <i class="fas fa-cog"></i>
+                                        </a>
+                                        <a href="{% url 'grade_report' c.id %}"
+                                           class="btn btn-sm btn-success"
+                                           data-bs-toggle="tooltip"
+                                           title="Manage Grades">
+                                            <i class="fas fa-chart-line"></i>
+                                        </a>
+                                        <a href="{% url 'attendance_list' %}"
+                                           class="btn btn-sm btn-info"
+                                           data-bs-toggle="tooltip"
+                                           title="Manage Attendance">
+                                            <i class="fas fa-clipboard-check"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4">
+                                    No courses available
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Functions and Notifications -->
+    <div class="col-md-4">
+        <!-- Quick Functions (example) -->
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Functions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <a href="{% url 'manage_courses' %}" class="card border-0 bg-light text-decoration-none text-center p-3">
+                            <i class="fas fa-book-open text-primary fa-2x mb-2"></i>
+                            <h6 class="mb-0">Course Management</h6>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'announcement_list' %}" class="card border-0 bg-light text-decoration-none text-center p-3">
+                            <i class="fas fa-bullhorn text-warning fa-2x mb-2"></i>
+                            <h6 class="mb-0">Post Announcement</h6>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'attendance_list' %}" class="card border-0 bg-light text-decoration-none text-center p-3">
+                            <i class="fas fa-clipboard-check text-success fa-2x mb-2"></i>
+                            <h6 class="mb-0">Attendance Management</h6>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'teacher_analysis' %}" class="card border-0 bg-light text-decoration-none text-center p-3">
+                            <i class="fas fa-chart-bar text-info fa-2x mb-2"></i>
+                            <h6 class="mb-0">Analytics</h6>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- To-Do List (example) -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>To-Do List</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <div>
+                                <h6 class="mb-1">Grade Assignments</h6>
+                                <p class="mb-0 text-muted small">Data Structures - Chapter 3</p>
+                            </div>
+                            <span class="badge bg-danger">Due Today</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <div>
+                                <h6 class="mb-1">Prepare Exam Paper</h6>
+                                <p class="mb-0 text-muted small">Submit to Academic Office by Monday</p>
+                            </div>
+                            <span class="badge bg-warning">Urgent</span>
+                        </div>
+                    </div>
+                    <!-- More to-dos... -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

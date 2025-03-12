@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-in with Map</title>
+
+    <!-- 引入 Leaflet.js 地图库 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        #map { height: 400px; width: 100%; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Location-Based Check-in</h1>
+
+    <!-- 课程选择 -->
+    <label for="course-select">Select Course:</label>
+    <select id="course-select">
+        <option value="">-- Select a Course --</option>
+        {% for course in courses %}
+        <option value="{{ course.id }}">{{ course.name }}</option>
+        {% endfor %}
+    </select>
+
+    <button onclick="getLocation()">Check-in Now</button>
+
+    <div id="status"></div>
+    <div id="map"></div>
+
+    <script>
+        let map, marker;
+
+        function initMap(lat, lon) {
+            if (!map) {
+                map = L.map('map').setView([lat, lon], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                marker = L.marker([lat, lon]).addTo(map)
+                    .bindPopup("Your Current Location")
+                    .openPopup();
+            } else {
+                map.setView([lat, lon], 15);
+                marker.setLatLng([lat, lon]).bindPopup("Your Current Location").openPopup();
+            }
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(sendLocation, showError);
+            } else {
+                document.getElementById("status").innerText = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function sendLocation(position) {
+            let latitude = position.coords.latitude;
+            let longitude = position.coords.longitude;
+            let courseId = document.getElementById("course-select").value;
+
+            if (!courseId) {
+                alert("Please select a course before checking in.");
+                return;
+            }
+
+            document.getElementById("status").innerHTML = `Your Location: ${latitude}, ${longitude}`;
+
+            // 更新地图位置
+            initMap(latitude, longitude);
+
+            // 发送签到数据到 Django 服务器
+            fetch("{% url 'checkin' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams({
+                    latitude: latitude,
+                    longitude: longitude,
+                    course_id: courseId  // ✅ 修正 body 语法错误
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function showError(error) {
+            let statusDiv = document.getElementById("status");
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    statusDiv.innerText = "User denied the request for Geolocation.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    statusDiv.innerText = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    statusDiv.innerText = "The request to get user location timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    statusDiv.innerText = "An unknown error occurred.";
+                    break;
+            }
+        }
+
+        // 页面加载时获取位置
+        document.addEventListener("DOMContentLoaded", () => {
+            getLocation();
+        });
+    </script>
+
+</body>
+</html>
