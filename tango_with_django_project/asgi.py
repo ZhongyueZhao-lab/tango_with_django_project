@@ -1,16 +1,8 @@
-"""
-ASGI config for tango_with_django_project project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
-"""
-
+#################################################################
+# 文件: student_tracking_system/asgi.py
+#################################################################
 import os
-
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tango_with_django_project.settings')
-
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'student_tracking_system.settings')
 application = get_asgi_application()
